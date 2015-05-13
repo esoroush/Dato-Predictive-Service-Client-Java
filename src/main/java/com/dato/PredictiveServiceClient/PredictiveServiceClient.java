@@ -127,26 +127,26 @@ public class PredictiveServiceClient {
     }
 
     /**
-     * Send feedback to the Predictive Service for a specific predictive object.
+     * Send feedback to the Predictive Service for a specific query result.
      *
-     * @param predictive_object_name
-     *      String name of the predictive object to send feedback for.
-     * @param request
-     *      JSONObject constructed to send feedback
-     *      on the predictive object.
+     * @param request_id
+     *      String representation of the UUID from a query result.
+     * @param data
+     *      JSONObject constructed to send any additional attributes and
+     *      value pairs associated with the query result.
      * @return
      *      PredictiveServiceClientResponse containing the response from the
      *      Predictive Service.
      */
     @SuppressWarnings("unchecked")
     public PredictiveServiceClientResponse feedback(
-                    String predictive_object_name,
-                    JSONObject request) {
+                    String request_id,
+                    JSONObject data) {
         String url = constructURL(this.endpoint) + "/feedback";
 
         JSONObject requestJSON = new JSONObject();
-        requestJSON.put("data", request);
-        requestJSON.put("id", predictive_object_name);
+        requestJSON.put("data", data);
+        requestJSON.put("id", request_id);
         requestJSON.put("api_key", this.getApikey());
 
         return postRequest(url, requestJSON);

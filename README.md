@@ -22,7 +22,7 @@ Requirements
 Usage
 -----
 
-### Construct Client
+#### Construct Client
 
 To use the Dato Predictive Service Java Client library, first you need to obtain the
 following information from a running Dato Predictive Service:
@@ -45,10 +45,10 @@ is launched with a self-signed certificate or without certificate, please set to
 The PredictiveServiceClient can also be constructed from using a Predictive Service
 [client configuration file](https://dato.com/products/create/docs/generated/graphlab.deploy.PredictiveService.save_client_config.html).
 ```java
-PredictiveServiceClient client = new PredictiveServiceClient("path to the config file");
+PredictiveServiceClient client = new PredictiveServiceClient("path to config file");
 ```
 
-### Setup Request
+#### Setup Request
 
 To query your Predictive Service with this client, you need to create a simple JSON object. 
 We use [json-simple](https://code.google.com/p/json-simple/) to perform JSON operations.
@@ -75,14 +75,24 @@ request.put("data", data);
 The request needs to be JSON serializable in order to be used to query the Predictive Service.
 Therefore, make sure all the objects that you add to the request are all JSON serializable.
 
-### Query
+#### Set timeout
+
+To change the request timeout when querying the Predictive Service, use the following:
+```java
+client.setQueryTimeout(500); // 500ms
+```
+
+The default timeout is 10 seconds.
+
+#### Query
 
 To query your deployed model on the Predictive Serivce, simply do the following:
 ```java
-PredictiveServiceClientResponse response = client.query("you model name here", request);
+PredictiveServiceClientResponse response = client.query("you model name here",
+                                                        request);
 ```
 
-### Results
+#### Results
 
 To obtain the query results from the Predictive Service, simply use the returned response:
 ```java
@@ -90,32 +100,36 @@ import org.json.simple.JSONObject;
 JSONObject results = response.getResult();
 ```
 
-``getResult()`` a JSONObject that contains the information passed back from the PredictiveService.
+``getResult()`` returns a JSONObject that contains the query results of your model
+from the PredictiveService. 
 
-### Set timeout
+#### Send feedback
 
-To change the request timeout when querying the Predictive Service, use the following:
+Once you get the query result, you can submit feedback data corresponding to this query
+back to the Predictive Service. This feedback data can be used for evaluating your
+current model and training future models.
+
+To submit feedbacks data corresponding to a particular query, you will need the UUID
+of the query. The UUID can be easily obtained from the query result.
+
 ```java
-client.setQueryTimeout(500); // 500ms
+String uuid = results.get("uuid");
 ```
 
-### Send feedback
+For the feedback data, you can use any attributes or value pairs that you like.
+However, it must be contained within a JSONObject and must be JSON serializable.
 
-To submit feedbacks data corresponding to a particular query result, we will need to construct
-a JSONObject that contains a query result's UUID, and any other attributes associated with this
-query. 
-
+Example: 
 ```java
 JSONObject feedback_request = new JSONObject();
-// must use "request_id" as the key to UUID
-feedback_request.put("request_id", "a query result's UUID");
 feedback_request.put("searched_terms", "accommodations");
+feedback_request.put("num_of_clicks", 3);
 ```
 
-Once we have constructed a feedback JSONObject, we can use the feedback method to send
-this feedback to the Predictive Service for that queried model.
+With that JSONObject constructed above, we can send this JSONObject to the Predictive
+Service to associate this feedback with a particular query.
 ```java
-PredictiveServiceClientResponse response = client.feedback("your model name", 
+PredictiveServiceClientResponse response = client.feedback(uuid,
                                                            feedback_request);
 ```
 
