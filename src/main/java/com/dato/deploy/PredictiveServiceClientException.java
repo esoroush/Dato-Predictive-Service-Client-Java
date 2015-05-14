@@ -1,4 +1,4 @@
-package com.dato.PredictiveServiceClient;
+package com.dato.deploy;
 
 import org.json.simple.JSONObject;
 

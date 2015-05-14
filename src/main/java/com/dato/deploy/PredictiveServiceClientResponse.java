@@ -1,4 +1,5 @@
-package com.dato.PredictiveServiceClient;
+package com.dato.deploy;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;

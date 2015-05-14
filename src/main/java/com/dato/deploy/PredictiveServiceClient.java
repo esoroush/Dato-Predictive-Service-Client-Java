@@ -1,4 +1,4 @@
-package com.dato.PredictiveServiceClient;
+package com.dato.deploy;
 
 import com.ning.http.client.*;
 import com.ning.http.client.AsyncHttpClient.BoundRequestBuilder;
@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
-import org.json.simple.*;
+import org.json.simple.JSONObject;
 
 /**
  * This is the Predictive Service Java Client that consumes the service that 

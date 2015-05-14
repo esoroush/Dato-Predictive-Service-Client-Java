@@ -7,7 +7,7 @@ To use the Dato Predictive Service Java Client library, simply add this dependen
 ```xml
 <dependency>
   <groupId>com.dato</groupId>
-  <artifactId>DatoPredictiveServiceClient</artifactId>
+  <artifactId>predictive-service-client</artifactId>
   <version>1.0</version>
 </dependency>
 ```
@@ -31,7 +31,7 @@ following information from a running Dato Predictive Service:
 
 Once you have obtained the above information, simply construct the PredictiveServiceClient:
 ```java
-import com.dato.DatoPredictiveServiceCLient.*;
+import com.dato.deploy.PredictiveServiceClient;
 
 PredictiveServiceClient client = new PredictiveServiceClient("CNAME or DNS name",
                            "API key", true); // enabled SSL certificate verification
@@ -42,7 +42,7 @@ of the PredictiveServiceClient constructor to **true**. However, if you Predicti
 is launched with a self-signed certificate or without certificate, please set to
 **false** the last parameter of the constructor.
 
-The PredictiveServiceClient can also be constructed from using a Predictive Service
+The PredictiveServiceClient can also be constructed by using a Predictive Service
 [client configuration file](https://dato.com/products/create/docs/generated/graphlab.deploy.PredictiveService.save_client_config.html).
 ```java
 PredictiveServiceClient client = new PredictiveServiceClient("path to config file");
@@ -88,6 +88,8 @@ The default timeout is 10 seconds.
 
 To query your deployed model on the Predictive Serivce, simply do the following:
 ```java
+import com.dato.deploy.PredictiveServiceClientResponse;
+
 PredictiveServiceClientResponse response = client.query("you model name here",
                                                         request);
 ```
@@ -109,7 +111,7 @@ Once you get the query result, you can submit feedback data corresponding to thi
 back to the Predictive Service. This feedback data can be used for evaluating your
 current model and training future models.
 
-To submit feedbacks data corresponding to a particular query, you will need the UUID
+To submit feedback data corresponding to a particular query, you will need the UUID
 of the query. The UUID can be easily obtained from the query result.
 
 ```java

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.dato</groupId>
-  <artifactId>DatoPredictiveServiceClient</artifactId>
+  <artifactId>predictive-service-client</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Dato Predictive Service Client</name>
@@ -48,10 +48,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <build>
-    <sourceDirectory>src/main</sourceDirectory>
-  </build>
 
   <developers>
     <developer>
