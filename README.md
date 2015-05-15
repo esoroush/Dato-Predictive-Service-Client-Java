@@ -75,6 +75,12 @@ request.put("data", data);
 The request needs to be JSON serializable in order to be used to query the Predictive Service.
 Therefore, make sure all the objects that you add to the request are all JSON serializable.
 
+**Notes**
+
+- Different models could support different query methods (recommend, predict, query, etc.)
+  and different syntax and format for **data**. You will need to know the
+  supported methods and query data format before querying the model.
+
 #### Set timeout
 
 To change the request timeout when querying the Predictive Service, use the following:
