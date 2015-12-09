@@ -6,6 +6,7 @@ import com.ning.http.client.AsyncHttpClient.BoundRequestBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
+import java.util.Base64;
 
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
@@ -24,6 +25,7 @@ public class PredictiveServiceClient {
     private String endpoint;
     private boolean should_verify_certificate;
     private int timeout;
+    private int schema_version;
     private AsyncHttpClient asyncClient;
 
     /**
@@ -54,6 +56,7 @@ public class PredictiveServiceClient {
 
         this.timeout = 10000; // default to 10 seconds timeout
         initConnection(); // initialize a connection to Predictive Service.
+        this.schema_version = getSchema(); // find out the schema version of the Predictive Service.   
     }
 
     /**
@@ -121,8 +124,9 @@ public class PredictiveServiceClient {
 
         JSONObject requestJSON = new JSONObject();
         requestJSON.put("data", request);
-        requestJSON.put("api_key", this.getApikey());
-
+        if (this.schema_version < 7) {
+          requestJSON.put("api_key", this.getApikey());
+        }
         return postRequest(url, requestJSON);
     }
 
@@ -147,8 +151,9 @@ public class PredictiveServiceClient {
         JSONObject requestJSON = new JSONObject();
         requestJSON.put("data", data);
         requestJSON.put("id", request_id);
-        requestJSON.put("api_key", this.getApikey());
-
+        if (this.schema_version < 7) {
+          requestJSON.put("api_key", this.getApikey());
+        }
         return postRequest(url, requestJSON);
     }
 
@@ -159,7 +164,12 @@ public class PredictiveServiceClient {
     private PredictiveServiceClientResponse postRequest(String url,
                                     JSONObject requestJSON) {
         BoundRequestBuilder asyncRequest = asyncClient.preparePost(url);
-        asyncRequest.setHeader("content-type", "application/json");
+        asyncRequest.addHeader("content-type", "application/json");
+        try {
+          asyncRequest.addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString(("api_key:"+this.getApikey()).getBytes("UTF-8")));
+        } catch (java.io.UnsupportedEncodingException e) {
+           throw new PredictiveServiceClientException("Error while base64-encoding the api_key.",e);  
+        }
         asyncRequest.setBody(requestJSON.toJSONString());
         asyncRequest.setRequestTimeout(this.timeout);
 
@@ -174,7 +184,28 @@ public class PredictiveServiceClient {
         Future<Response> response = asyncClient.prepareGet(url).execute();
         return new PredictiveServiceClientResponse(response);
     }
-
+    
+    /*
+     * Initialize a connection to the Predictive Service.
+     */
+    public int getSchema() {
+        String url = constructURL(this.endpoint);
+        PredictiveServiceClientResponse response = getRequest(url);
+        if (response.getStatusCode() == 200) {
+            // successfully connected
+            JSONObject results = response.getResult();
+            try {
+              return ((Long)results.get("schema_version")).intValue();
+            } catch (Exception e) {
+              return -1;
+            }
+        } else {
+            throw new PredictiveServiceClientException(
+                    "Error connecting to service: response: " +
+                    response.getErrorMessage());
+        }
+    }
+ 
     /*
      * Initialize a connection to the Predictive Service.
      */
