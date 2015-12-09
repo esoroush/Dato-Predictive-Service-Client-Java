@@ -4,15 +4,15 @@ import com.dato.deploy.PredictiveServiceClientResponse;
 import com.dato.deploy.PredictiveServiceClientException;
 /* 
  * A sample Java main application that connects to a running 
- * GLC predictive services. This example assume an "add" function 
- * already deployed in predictive services. The schema of "add" function 
+ * Dato Predictive Services. This example assumes an "add" function 
+ * already deployed in the predictive service. The schema of "add" function 
  * in Python is as follow:
  *
  * def add(a,b):
  *   return a + b
  *
  * Replace "end_point" and "api_key" to the corresponding values in your 
- * predictive services. To run this Java main application using maven:
+ * predictive service. To run this Java main application using maven:
  *
  * >>> mvn compile 
  * >>> mvn exec:java -Dexec.mainClass="SampleCode" 
